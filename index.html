@@ -54,8 +54,13 @@
   </table>
 </form>
 
-<script>
-let locations = ["Ballarat", "Geelong"];
+<script type="module">
+
+import { locations } from './locations.js';
+import { warbandsByLocation } from './locations.js';
+
+
+/*let locations = ["Ballarat", "Geelong"];
 
 let warbandsByLocation = {
   "Ballarat": [
@@ -63,7 +68,7 @@ let warbandsByLocation = {
     "Wardens"
   ],
   "Geelong": ["Everfrost", "Legion", "Black Rose"]
-};
+};*/
 
 let commonWarbands = ["Militia", "Visitors"];
 
