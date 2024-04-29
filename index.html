@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<form action="/submit" method="post">
+  <div style="display: flex; align-items: center; margin-bottom: 20px;">
+    <label for="location">Location:</label>
+    <select id="location" name="location" onchange="addNewInputPairs(this)">
+      <option value="">Select a location</option>
+      <!-- Options will be populated by JavaScript -->
+    </select>
+  </div>
+  <table id="inputPairs">
+    <!-- This table will be populated by JavaScript -->
+  </table>
+    
+<table id="totals" style="margin-top: 20px; display: none;">
+    <tr>
+        <th>Team A</th>
+        <th></th>
+        <th>Team B</th>
+    </tr>
+    <tr>
+        <th>Players</th>
+        <th>WP</th>
+        <th>Players</th>
+        <th>WP</th>
+    </tr>
+    <tr>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+    </tr>
+    <tr>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+    </tr>
+    <tr>
+        <td colspan="4" style="height: 10px;"></td>
+    </tr>
+</table>
+
+
+  <table id="teamTable" style="margin-top: 20px; display: none;">
+    <tr>
+      <th style="width: 150px;">Team A</th>
+      <th style="width: 25px;"></th>
+      <th style="width: 150px;">Team B</th>
+    </tr>
+    <!-- This table will be populated by JavaScript -->
+  </table>
+</form>
+
+<script>
+let locations = ["Ballarat", "Geelong"];
+
+let warbandsByLocation = {
+  "Ballarat": [
+    "Cockerals", "Boars", "Yldrai", "Middenheim", "Casteliers Guard", 
+    "Wardens"
+  ],
+  "Geelong": ["Everfrost", "Legion", "Black Rose"]
+};
+
+let commonWarbands = ["Militia", "Visitors"];
+
+window.onload = function() {
+  let locationSelect = document.getElementById('location');
+  for (let i = 0; i < locations.length; i++) {
+    let opt = document.createElement('option');
+    opt.value = locations[i];
+    opt.innerHTML = locations[i];
+    locationSelect.appendChild(opt);
+  }
+}
+
+function addNewInputPairs(element) {
+  let inputPairs = document.getElementById('inputPairs');
+  inputPairs.innerHTML = ''; // Clear previous inputs
+  let teamTable = document.getElementById('teamTable');
+  while (teamTable.rows.length > 1) {
+    teamTable.deleteRow(1); // Clear previous rows
+  }
+  if (element.value) {
+    teamTable.style.display = 'table'; // Show the table when a location is selected
+    totals.style.display = 'table'; // Show the table when a location is selected
+    let warbands = warbandsByLocation[element.value].concat(commonWarbands);
+    for (let i = 0; i < warbands.length; i++) {
+      // Add a row for each warband
+      let newRow = document.createElement('tr');
+      newRow.innerHTML = '<td></td><td></td><td></td><td></td><td></td><td></td><td></td>';
+      teamTable.appendChild(newRow);
+    }
+  } else {
+    teamTable.style.display = 'none'; // Hide the table when no location is selected
+    totals.style.display = 'none';
+  }
+  let warbands = warbandsByLocation[element.value].concat(commonWarbands);
+  for (let i = 0; i < warbands.length; i++) {
+    addNewInputPair(inputPairs, warbands[i], false, i);
+  }
+}
+
+function addNewInputPair(inputPairs, title, isManual, index) {
+  let newRow = document.createElement('tr');
+
+  let titleCell = document.createElement('td');
+  if (!isManual) {
+    titleCell.innerHTML = title + ':';
+  } else {
+    let manualInput = document.createElement('input');
+    manualInput.type = 'text';
+    manualInput.name = 'manualName';
+    manualInput.style.width = '100px';
+    titleCell.appendChild(manualInput);
+  }
+  newRow.appendChild(titleCell);
+
+  let playersCell = document.createElement('td');
+  playersCell.innerHTML = 'Players:';
+  let playersInput = document.createElement('input');
+  playersInput.type = 'number';
+  playersInput.name = 'number1';
+  playersInput.required = true;
+  playersInput.style.width = '50px';
+  playersInput.value = '0'; // Default value set to 0
+  playersCell.appendChild(playersInput);
+  newRow.appendChild(playersCell);
+
+  let wpCell = document.createElement('td');
+  wpCell.innerHTML = 'WP:';
+  let wpInput = document.createElement('input');
+  wpInput.type = 'number';
+  wpInput.name = 'number2';
+  wpInput.required = true;
+  wpInput.style.width = '50px';
+  wpInput.value = '0'; // Default value set to 0
+  wpCell.appendChild(wpInput);
+  newRow.appendChild(wpCell);
+
+  let teamCell = document.createElement('td');
+  let teamALabel = document.createElement('label');
+  teamALabel.innerHTML = 'TeamA:';
+  let teamAInput = document.createElement('input');
+  teamAInput.type = 'radio';
+  teamAInput.name = 'team' + index;
+  teamAInput.value = 'A';
+  teamAInput.dataset.warband = title; // Add the warband name as a data attribute
+  teamAInput.addEventListener('change', updateTeamTable); // Add an event listener
+  teamCell.appendChild(teamALabel);
+  teamCell.appendChild(teamAInput);
+
+  let teamBLabel = document.createElement('label');
+  teamBLabel.innerHTML = 'TeamB:';
+  let teamBInput = document.createElement('input');
+  teamBInput.type = 'radio';
+  teamBInput.name = 'team' + index;
+  teamBInput.value = 'B';
+  teamBInput.dataset.warband = title; // Add the warband name as a data attribute
+  teamBInput.addEventListener('change', updateTeamTable); // Add an event listener
+  teamCell.appendChild(teamBLabel);
+  teamCell.appendChild(teamBInput);
+
+  newRow.appendChild(teamCell);
+
+  inputPairs.appendChild(newRow);
+
+  playersInput.addEventListener('change', calculateTeamTotals);
+    wpInput.addEventListener('change', calculateTeamTotals);
+    teamAInput.addEventListener('change', calculateTeamTotals);
+    teamBInput.addEventListener('change', calculateTeamTotals);
+}
+
+function updateTeamTable(event) {
+  let teamTable = document.getElementById('teamTable');
+  let inputPairs = document.getElementById('inputPairs');
+  let rowIndex = parseInt(event.target.name.substring(4)) + 1; // The row index is the warband index + 1
+  let row;
+  let teamACellIndex = 0;
+  let teamBCellIndex = 4;
+
+
+
+ 
+
+  // Remove the warband name from the table if it exists
+  for (let i = 1; i < teamTable.rows.length; i++) {
+    if (teamTable.rows[i].cells[teamACellIndex].textContent === event.target.dataset.warband) {
+      teamTable.rows[i].cells[teamACellIndex].textContent = '';
+    }
+    if (teamTable.rows[i].cells[teamBCellIndex].textContent === event.target.dataset.warband) {
+      teamTable.rows[i].cells[teamBCellIndex].textContent = '';
+    }
+  }
+
+  if (event.target.value === 'A') {
+    // Find the first row with an empty Team A cell
+    for (let i = 1; i < teamTable.rows.length; i++) {
+      if (!teamTable.rows[i].cells[teamACellIndex].textContent) {
+        row = teamTable.rows[i];
+        break;
+      }
+    }
+    if (!row) {
+      // If all rows have a Team A cell, create a new row
+      row = document.createElement('tr');
+      row.innerHTML = '<td></td><td></td><td></td><td></td><td></td><td></td><td></td>';
+      teamTable.appendChild(row);
+    }
+    row.cells[teamACellIndex].textContent = event.target.dataset.warband; // Update the Team A cell
+  } else if (event.target.value === 'B') {
+    // Find the first row with an empty Team B cell
+    for (let i = 1; i < teamTable.rows.length; i++) {
+      if (!teamTable.rows[i].cells[teamBCellIndex].textContent) {
+        row = teamTable.rows[i];
+        break;
+      }
+    }
+    if (!row) {
+      // If all rows have a Team B cell, create a new row
+      row = document.createElement('tr');
+      row.innerHTML = '<td></td><td></td><td></td><td></td><td></td><td></td><td></td>';
+      teamTable.appendChild(row);
+    }
+    row.cells[teamBCellIndex].textContent = event.target.dataset.warband; // Update the Team B cell
+  }
+
+}
+
+function calculateTeamTotals() {
+    let inputPairs = document.getElementById('inputPairs');
+    let teamTable = document.getElementById('teamTable');
+    let totalsTable = document.getElementById('totals');
+
+    // Clear previous totals
+    for (let i = 2; i < totalsTable.rows.length; i++) {
+        //totalsTable.rows[i].cells[0].textContent = '';
+        //totalsTable.rows[i].cells[1].textContent = '';
+        //totalsTable.rows[i].cells[2].textContent = '';
+        //totalsTable.rows[i].cells[3].textContent = '';
+    }
+
+    // Initialize team totals
+    let teamATotalPlayers = 0;
+    let teamATotalWP = 0;
+    let teamBTotalPlayers = 0;
+    let teamBTotalWP = 0;
+
+    // Iterate through inputPairs to calculate team totals
+    for (let i = 0; i < inputPairs.rows.length; i++) {
+        let playersInput = inputPairs.rows[i].querySelector('input[name="number1"]');
+        let wpInput = inputPairs.rows[i].querySelector('input[name="number2"]');
+        let teamAInput = inputPairs.rows[i].querySelector('input[value="A"]');
+        let teamBInput = inputPairs.rows[i].querySelector('input[value="B"]');
+
+        //console.log(teamAInput.checked);
+
+        if (teamAInput.checked) {
+            teamATotalPlayers += parseInt(playersInput.value);
+            teamATotalWP += parseInt(wpInput.value);
+        } else if (teamBInput.checked) {
+            teamBTotalPlayers += parseInt(playersInput.value);
+            teamBTotalWP += parseInt(wpInput.value);
+        }
+    }
+
+
+    //let playersInputTest = inputPairs.rows[7].querySelector('input[name="team"]');
+    //console.log(parseInt(playersInputTest.value));
+    //console.log(teamATotalPlayers);
+
+    // Update totals table with team totals
+    totalsTable.rows[2].cells[0].textContent = teamATotalPlayers;
+    totalsTable.rows[2].cells[1].textContent = teamATotalWP;
+    totalsTable.rows[2].cells[2].textContent = teamBTotalPlayers;
+    totalsTable.rows[2].cells[3].textContent = teamBTotalWP;
+
+    totalsTable.rows[3].cells[0].textContent = teamATotalPlayers-teamBTotalPlayers;
+    if (teamATotalPlayers > teamBTotalPlayers) {
+        totalsTable.rows[3].cells[0].style.color = 'blue';
+    } else if (teamATotalPlayers < teamBTotalPlayers) {
+        totalsTable.rows[3].cells[0].style.color = 'red';
+    } else {
+        totalsTable.rows[3].cells[0].style.color = 'black';
+    }
+    totalsTable.rows[3].cells[1].textContent = teamATotalWP-teamBTotalWP;
+    if (teamATotalWP > teamBTotalWP) {
+        totalsTable.rows[3].cells[1].style.color = 'blue';
+    } else if (teamATotalWP < teamBTotalWP) {
+        totalsTable.rows[3].cells[1].style.color = 'red';
+    } else {
+        totalsTable.rows[3].cells[1].style.color = 'black';
+    }
+    totalsTable.rows[3].cells[2].textContent = teamBTotalPlayers-teamATotalPlayers;
+    if (teamBTotalPlayers > teamATotalPlayers) {
+        totalsTable.rows[3].cells[2].style.color = 'blue';
+    } else if (teamBTotalPlayers < teamATotalPlayers) {
+        totalsTable.rows[3].cells[2].style.color = 'red';
+    } else {
+        totalsTable.rows[3].cells[2].style.color = 'black';
+    }
+    totalsTable.rows[3].cells[3].textContent = teamBTotalWP-teamATotalWP;
+    if (teamBTotalWP > teamATotalWP) {
+        totalsTable.rows[3].cells[3].style.color = 'blue';
+    } else if (teamBTotalWP < teamATotalWP) {
+        totalsTable.rows[3].cells[3].style.color = 'red';
+    } else {
+        totalsTable.rows[3].cells[3].style.color = 'black';
+    }
+}
+
+
+</script>
+
+</body>
+</html>
