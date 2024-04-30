@@ -100,18 +100,18 @@
 
 <script type="module">
 
-//import { locations } from './database.js';
-//import { warbandsByLocation } from './database.js';
 
 import { warbandsByLocation } from './database.js';
+import { commonWarbands } from './database.js';
+
 
 let locations = Object.keys(warbandsByLocation);
 
 
-let commonWarbands = ["Militia", "Visitors"];
 
 window.onload = function() {
   let locationSelect = document.getElementById('location');
+
 
 
   locationSelect.addEventListener('change', function() {
@@ -159,7 +159,7 @@ inputPairs.appendChild(titleRow);
 
 
   let warbands = warbandsByLocation[element.value].concat(commonWarbands);
-  for (let i = 0; i < warbands.length; i++) {
+  for (let i = 1; i < warbands.length+1; i++) {
     addNewInputPair(inputPairs, warbands[i], false, i);
   }
 }
@@ -183,7 +183,7 @@ function addNewInputPair(inputPairs, title, isManual, index) {
   //playersCell.innerHTML = 'Players:';
   let playersInput = document.createElement('input');
   playersInput.type = 'number';
-  playersInput.name = 'number1';
+  playersInput.name = 'players';
   playersInput.required = true;
   playersInput.style.width = '50px';
   playersInput.placeholder = '0'; // Default value set to 0
@@ -194,7 +194,7 @@ function addNewInputPair(inputPairs, title, isManual, index) {
   //wpCell.innerHTML = 'WP:';
   let wpInput = document.createElement('input');
   wpInput.type = 'number';
-  wpInput.name = 'number2';
+  wpInput.name = 'WP';
   wpInput.required = true;
   wpInput.style.width = '50px';
   wpInput.placeholder = '0'; // Default value set to 0
@@ -241,7 +241,40 @@ teamAInput.addEventListener('change', calculateTeamTotals);
 teamBInput.addEventListener('change', calculateTeamTotals);
 
 
+  /*
+  let teamCell = document.createElement('td');
+  let teamALabel = document.createElement('label');
+  teamALabel.innerHTML = 'A:';
+  let teamAInput = document.createElement('input');
+  teamAInput.type = 'radio';
+  teamAInput.name = 'team' + index;
+  teamAInput.value = 'A';
+  teamAInput.dataset.warband = title; // Add the warband name as a data attribute
+  teamAInput.addEventListener('change', updateTeamTable); // Add an event listener
+  teamCell.appendChild(teamALabel);
+  teamCell.appendChild(teamAInput);
 
+  let teamBLabel = document.createElement('label');
+  teamBLabel.innerHTML = 'B:';
+  let teamBInput = document.createElement('input');
+  teamBInput.type = 'radio';
+  teamBInput.name = 'team' + index;
+  teamBInput.value = 'B';
+  teamBInput.dataset.warband = title; // Add the warband name as a data attribute
+  teamBInput.addEventListener('change', updateTeamTable); // Add an event listener
+  teamCell.appendChild(teamBLabel);
+  teamCell.appendChild(teamBInput);
+
+  newRow.appendChild(teamCell);
+
+  inputPairs.appendChild(newRow);
+
+  playersInput.addEventListener('change', calculateTeamTotals);
+    wpInput.addEventListener('change', calculateTeamTotals);
+    teamAInput.addEventListener('change', calculateTeamTotals);
+    teamBInput.addEventListener('change', calculateTeamTotals);
+
+    */
 }
 
 function updateTeamTable(event) {
@@ -267,7 +300,7 @@ function updateTeamTable(event) {
   }
 
   if (event.target.value === 'A') {
-    // Find the first row with an empty Team A cell
+    // Find the first row with an empty Team A cells
     for (let i = 1; i < teamTable.rows.length; i++) {
       if (!teamTable.rows[i].cells[teamACellIndex].textContent) {
         row = teamTable.rows[i];
@@ -301,59 +334,30 @@ function updateTeamTable(event) {
 }
 
 function calculateTeamTotals() {
-    let inputPairs = document.getElementById('inputPairs');
-    let teamTable = document.getElementById('teamTable');
-    let totalsTable = document.getElementById('totals');
+  let inputPairs = document.getElementById('inputPairs');
+  let teamTable = document.getElementById('teamTable');
+  let totalsTable = document.getElementById('totals');
 
-    // Clear previous totals
-    for (let i = 2; i < totalsTable.rows.length; i++) {
-        //totalsTable.rows[i].cells[0].textContent = '';
-        //totalsTable.rows[i].cells[1].textContent = '';
-        //totalsTable.rows[i].cells[2].textContent = '';
-        //totalsTable.rows[i].cells[3].textContent = '';
-    }
-
-    // Initialize team totals
-    let teamATotalPlayers = 0;
-    let teamATotalWP = 0;
-    let teamBTotalPlayers = 0;
-    let teamBTotalWP = 0;
+  let teamATotalPlayers = 0;
+  let teamATotalWP = 0;
+  let teamBTotalPlayers = 0;
+  let teamBTotalWP = 0;
 
     // Iterate through inputPairs to calculate team totals
     for (let i = 0; i < inputPairs.rows.length; i++) {
-        let playersInput = inputPairs.rows[i].querySelector('input[name="number1"]') || 0;
-        let wpInput = inputPairs.rows[i].querySelector('input[name="number2"]') || 0;
-        let teamAInput = inputPairs.rows[i].querySelector('input[value="A"]') || 0;
-        let teamBInput = inputPairs.rows[i].querySelector('input[value="B"]') || 0;
+        let playersInput = inputPairs.rows[i].querySelector('input[name="number1"]');
+        let wpInput = inputPairs.rows[i].querySelector('input[name="number2"]');
+        let teamAInput = inputPairs.rows[i].querySelector('input[value="A"]');
+        let teamBInput = inputPairs.rows[i].querySelector('input[value="B"]');
 
-        console.log(parseInt(wpInput.value));
+        //console.log(teamAInput.checked);
 
         if (teamAInput.checked) {
-          if (isNaN(parseInt(playersInput.value))) {
-            teamATotalPlayers += 0;
-          }
-          else {
             teamATotalPlayers += parseInt(playersInput.value);
-          }
-          if (isNaN(parseInt(wpInput.value))) {
-            teamATotalWP += 0;
-          }
-          else {
             teamATotalWP += parseInt(wpInput.value);
-          }
         } else if (teamBInput.checked) {
-          if(isNaN(parseInt(playersInput.value))) {
-            teamBTotalPlayers += 0;
-          }
-          else {
             teamBTotalPlayers += parseInt(playersInput.value);
-          }
-          if(isNaN(parseInt(wpInput.value))) {
-            teamBTotalWP += 0;
-          }
-          else {
             teamBTotalWP += parseInt(wpInput.value);
-          }
         }
     }
 
@@ -368,7 +372,7 @@ function calculateTeamTotals() {
     totalsTable.rows[2].cells[2].textContent = teamBTotalPlayers;
     totalsTable.rows[2].cells[3].textContent = teamBTotalWP;
 
-    totalsTable.rows[3].cells[0].textContent = teamATotalPlayers-teamBTotalPlayers;
+  totalsTable.rows[3].cells[0].textContent = teamATotalPlayers-teamBTotalPlayers;
     if (teamATotalPlayers > teamBTotalPlayers) {
         totalsTable.rows[3].cells[0].style.color = 'blue';
     } else if (teamATotalPlayers < teamBTotalPlayers) {
@@ -400,8 +404,8 @@ function calculateTeamTotals() {
     } else {
         totalsTable.rows[3].cells[3].style.color = 'black';
     }
-}
 
+}  //Placeholder
 
 </script>
 
