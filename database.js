@@ -12,3 +12,6 @@ export const warbandsByLocation = {
     ],
     "Geelong": ["Everfrost", "Legion", "Black Rose", "Dwarves"]
 };
+
+// Default Warband data
+export const commonWarbands = ["Militia", "Visitors"];
