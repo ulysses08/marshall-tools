@@ -180,23 +180,23 @@ function addNewInputPair(inputPairs, title, isManual, index) {
   newRow.appendChild(titleCell);
 
   let playersCell = document.createElement('td');
-  //playersCell.innerHTML = 'Players:';
   let playersInput = document.createElement('input');
   playersInput.type = 'number';
   playersInput.name = 'players';
   playersInput.required = true;
   playersInput.style.width = '50px';
+  playersInput.min = '0'; 
   playersInput.placeholder = '0'; // Default value set to 0
   playersCell.appendChild(playersInput);
   newRow.appendChild(playersCell);
 
   let wpCell = document.createElement('td');
-  //wpCell.innerHTML = 'WP:';
   let wpInput = document.createElement('input');
   wpInput.type = 'number';
   wpInput.name = 'WP';
   wpInput.required = true;
   wpInput.style.width = '50px';
+  wpInput.min = '0';  
   wpInput.placeholder = '0'; // Default value set to 0
   wpCell.appendChild(wpInput);
   newRow.appendChild(wpCell);
