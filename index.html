@@ -1,11 +1,42 @@
 <!DOCTYPE html>
 <html>
+
+<title>
+  Marshall Toolkit
+</title>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+
+    
+  body {
+    padding-right: 10px; /* Adjust the value as needed */
+  }
+
+  #totals {
+    margin: auto;
+  }
+
+  #teamTable {
+    margin: auto;
+    text-align: center;
+  }
+
+  #inputPairs td, #InputPairs th {
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  </style>
+</head>
+
 <body>
 
 <form action="/submit" method="post">
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
     <label for="location">Location:</label>
-    <select id="location" name="location" onchange="addNewInputPairs(this)">
+    <select id="location" name="location">
       <option value="">Select a location</option>
       <!-- Options will be populated by JavaScript -->
     </select>
@@ -56,9 +87,12 @@
 
 <script type="module">
 
-import { locations } from './locations.js';
-import { warbandsByLocation } from './locations.js';
+//import { locations } from './database.js';
+//import { warbandsByLocation } from './database.js';
 
+import { warbandsByLocation } from './database.js';
+
+let locations = Object.keys(warbandsByLocation);
 
 /*let locations = ["Ballarat", "Geelong"];
 
@@ -74,6 +108,13 @@ let commonWarbands = ["Militia", "Visitors"];
 
 window.onload = function() {
   let locationSelect = document.getElementById('location');
+
+
+  locationSelect.addEventListener('change', function() {
+    addNewInputPairs(this);
+  });
+
+
   for (let i = 0; i < locations.length; i++) {
     let opt = document.createElement('option');
     opt.value = locations[i];
@@ -148,7 +189,7 @@ function addNewInputPair(inputPairs, title, isManual, index) {
 
   let teamCell = document.createElement('td');
   let teamALabel = document.createElement('label');
-  teamALabel.innerHTML = 'TeamA:';
+  teamALabel.innerHTML = 'A:';
   let teamAInput = document.createElement('input');
   teamAInput.type = 'radio';
   teamAInput.name = 'team' + index;
@@ -159,7 +200,7 @@ function addNewInputPair(inputPairs, title, isManual, index) {
   teamCell.appendChild(teamAInput);
 
   let teamBLabel = document.createElement('label');
-  teamBLabel.innerHTML = 'TeamB:';
+  teamBLabel.innerHTML = 'B:';
   let teamBInput = document.createElement('input');
   teamBInput.type = 'radio';
   teamBInput.name = 'team' + index;
@@ -185,7 +226,7 @@ function updateTeamTable(event) {
   let rowIndex = parseInt(event.target.name.substring(4)) + 1; // The row index is the warband index + 1
   let row;
   let teamACellIndex = 0;
-  let teamBCellIndex = 4;
+  let teamBCellIndex = 2;
 
 
 
