@@ -265,7 +265,7 @@ function updateTeamTable(event) {
   }
 
   if (event.target.value === 'A') {
-    // Find the first row with an empty Team A cell
+    // Find the first row with an empty Team A cells
     for (let i = 1; i < teamTable.rows.length; i++) {
       if (!teamTable.rows[i].cells[teamACellIndex].textContent) {
         row = teamTable.rows[i];
