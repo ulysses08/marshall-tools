@@ -10,5 +10,5 @@ export const warbandsByLocation = {
     "Cockerals", "Boars", "Yldrai", "Middenheim", "Casteliers Guard", 
     "Wardens"
     ],
-    "Geelong": ["Everfrost", "Legion", "Black Rose", "Dwarves", "Testval"]
+    "Geelong": ["Everfrost", "Legion", "Black Rose", "Dwarves"]
 };
