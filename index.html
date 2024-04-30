@@ -100,18 +100,18 @@
 
 <script type="module">
 
-//import { locations } from './database.js';
-//import { warbandsByLocation } from './database.js';
 
 import { warbandsByLocation } from './database.js';
+import { commonWarbands } from './database.js';
+
 
 let locations = Object.keys(warbandsByLocation);
 
 
-let commonWarbands = ["Militia", "Visitors"];
 
 window.onload = function() {
   let locationSelect = document.getElementById('location');
+
 
 
   locationSelect.addEventListener('change', function() {
@@ -159,7 +159,7 @@ inputPairs.appendChild(titleRow);
 
 
   let warbands = warbandsByLocation[element.value].concat(commonWarbands);
-  for (let i = 0; i < warbands.length; i++) {
+  for (let i = 1; i < warbands.length+1; i++) {
     addNewInputPair(inputPairs, warbands[i], false, i);
   }
 }
@@ -183,7 +183,7 @@ function addNewInputPair(inputPairs, title, isManual, index) {
   //playersCell.innerHTML = 'Players:';
   let playersInput = document.createElement('input');
   playersInput.type = 'number';
-  playersInput.name = 'number1';
+  playersInput.name = 'players';
   playersInput.required = true;
   playersInput.style.width = '50px';
   playersInput.value = '0'; // Default value set to 0
@@ -194,7 +194,7 @@ function addNewInputPair(inputPairs, title, isManual, index) {
   //wpCell.innerHTML = 'WP:';
   let wpInput = document.createElement('input');
   wpInput.type = 'number';
-  wpInput.name = 'number2';
+  wpInput.name = 'WP';
   wpInput.required = true;
   wpInput.style.width = '50px';
   wpInput.value = '0'; // Default value set to 0
@@ -240,41 +240,6 @@ wpInput.addEventListener('change', calculateTeamTotals);
 teamAInput.addEventListener('change', calculateTeamTotals);
 teamBInput.addEventListener('change', calculateTeamTotals);
 
-
-  /*
-  let teamCell = document.createElement('td');
-  let teamALabel = document.createElement('label');
-  teamALabel.innerHTML = 'A:';
-  let teamAInput = document.createElement('input');
-  teamAInput.type = 'radio';
-  teamAInput.name = 'team' + index;
-  teamAInput.value = 'A';
-  teamAInput.dataset.warband = title; // Add the warband name as a data attribute
-  teamAInput.addEventListener('change', updateTeamTable); // Add an event listener
-  teamCell.appendChild(teamALabel);
-  teamCell.appendChild(teamAInput);
-
-  let teamBLabel = document.createElement('label');
-  teamBLabel.innerHTML = 'B:';
-  let teamBInput = document.createElement('input');
-  teamBInput.type = 'radio';
-  teamBInput.name = 'team' + index;
-  teamBInput.value = 'B';
-  teamBInput.dataset.warband = title; // Add the warband name as a data attribute
-  teamBInput.addEventListener('change', updateTeamTable); // Add an event listener
-  teamCell.appendChild(teamBLabel);
-  teamCell.appendChild(teamBInput);
-
-  newRow.appendChild(teamCell);
-
-  inputPairs.appendChild(newRow);
-
-  playersInput.addEventListener('change', calculateTeamTotals);
-    wpInput.addEventListener('change', calculateTeamTotals);
-    teamAInput.addEventListener('change', calculateTeamTotals);
-    teamBInput.addEventListener('change', calculateTeamTotals);
-
-    */
 }
 
 function updateTeamTable(event) {
@@ -334,54 +299,73 @@ function updateTeamTable(event) {
 }
 
 function calculateTeamTotals() {
-    let inputPairs = document.getElementById('inputPairs');
-    let teamTable = document.getElementById('teamTable');
-    let totalsTable = document.getElementById('totals');
+  let inputPairs = document.getElementById('inputPairs');
+  let teamTable = document.getElementById('teamTable');
+  let totalsTable = document.getElementById('totals');
 
-    // Clear previous totals
-    for (let i = 2; i < totalsTable.rows.length; i++) {
-        //totalsTable.rows[i].cells[0].textContent = '';
-        //totalsTable.rows[i].cells[1].textContent = '';
-        //totalsTable.rows[i].cells[2].textContent = '';
-        //totalsTable.rows[i].cells[3].textContent = '';
+  let teamATotalPlayers = 0;
+  let teamATotalWP = 0;
+  let teamBTotalPlayers = 0;
+  let teamBTotalWP = 0;
+
+  // Loop through all input pairs
+  for (let i = 1; i < inputPairs.children.length; i++) {
+    let inputPair = inputPairs.children[i];
+
+    // Get the player's value
+    let playersInput = inputPair.querySelector('input[name="players"]');
+    console.log(playersInput.value);
+    
+    let wpInput = inputPair.querySelector('input[name="WP"]')
+    console.log(wpInput.value);
+    
+    let playersValue = parseInt(playersInput.value) || 0;
+    let wpValue = parseInt(wpInput.value) || 0;
+
+    let index = i; // replace with the actual index
+    let radioButtons = document.querySelectorAll(`input[name="team${index}"]`);
+
+    let teamAInput = radioButtons[0];
+    let teamBInput = radioButtons[1];
+
+    // Now you can use teamAInput and teamBInput
+    console.log(teamAInput.checked); // logs true if team A is selected, false otherwise
+    console.log(teamBInput.checked); // logs true if team B is selected, false otherwise
+
+
+
+    // Check which radio button is selected and add the player's value to the corresponding team's total
+    
+    
+    //let teamAInput = inputPair.querySelector('input[name="teamA"]');
+    //let teamBInput = inputPair.querySelector('input[name="teamB"]');
+    if (teamAInput.checked) {
+      teamATotalPlayers += playersValue;
+      teamATotalWP += wpValue;
+    } else if (teamBInput.checked) {
+      teamBTotalPlayers += playersValue;
+      teamBTotalWP += wpValue;
     }
 
-    // Initialize team totals
-    let teamATotalPlayers = 0;
-    let teamATotalWP = 0;
-    let teamBTotalPlayers = 0;
-    let teamBTotalWP = 0;
+    
+  }
 
-    // Iterate through inputPairs to calculate team totals
-    for (let i = 0; i < inputPairs.rows.length; i++) {
-        let playersInput = inputPairs.rows[i].querySelector('input[name="number1"]');
-        let wpInput = inputPairs.rows[i].querySelector('input[name="number2"]');
-        let teamAInput = inputPairs.rows[i].querySelector('input[value="A"]');
-        let teamBInput = inputPairs.rows[i].querySelector('input[value="B"]');
+  // Log the totals for testing
+  console.log('Team A total players:', teamATotalPlayers);
+  console.log('Team A total WP:', teamATotalWP);
+  console.log('Team B total players:', teamBTotalPlayers);
+  console.log('Team B total WP:', teamBTotalWP);
 
-        //console.log(teamAInput.checked);
-
-        if (teamAInput.checked) {
-            teamATotalPlayers += parseInt(playersInput.value);
-            teamATotalWP += parseInt(wpInput.value);
-        } else if (teamBInput.checked) {
-            teamBTotalPlayers += parseInt(playersInput.value);
-            teamBTotalWP += parseInt(wpInput.value);
-        }
-    }
+  
+  // Update totals table with team totals
+  totalsTable.rows[2].cells[0].textContent = teamATotalPlayers;
+  totalsTable.rows[2].cells[1].textContent = teamATotalWP;
+  totalsTable.rows[2].cells[2].textContent = teamBTotalPlayers;
+  totalsTable.rows[2].cells[3].textContent = teamBTotalWP;
 
 
-    //let playersInputTest = inputPairs.rows[7].querySelector('input[name="team"]');
-    //console.log(parseInt(playersInputTest.value));
-    //console.log(teamATotalPlayers);
 
-    // Update totals table with team totals
-    totalsTable.rows[2].cells[0].textContent = teamATotalPlayers;
-    totalsTable.rows[2].cells[1].textContent = teamATotalWP;
-    totalsTable.rows[2].cells[2].textContent = teamBTotalPlayers;
-    totalsTable.rows[2].cells[3].textContent = teamBTotalWP;
-
-    totalsTable.rows[3].cells[0].textContent = teamATotalPlayers-teamBTotalPlayers;
+  totalsTable.rows[3].cells[0].textContent = teamATotalPlayers-teamBTotalPlayers;
     if (teamATotalPlayers > teamBTotalPlayers) {
         totalsTable.rows[3].cells[0].style.color = 'blue';
     } else if (teamATotalPlayers < teamBTotalPlayers) {
@@ -413,8 +397,8 @@ function calculateTeamTotals() {
     } else {
         totalsTable.rows[3].cells[3].style.color = 'black';
     }
-}
 
+}  //Placeholder
 
 </script>
 
