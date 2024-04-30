@@ -160,7 +160,7 @@ inputPairs.appendChild(titleRow);
 
   let warbands = warbandsByLocation[element.value].concat(commonWarbands);
   for (let i = 1; i < warbands.length+1; i++) {
-    addNewInputPair(inputPairs, warbands[i], false, i);
+    addNewInputPair(inputPairs, warbands[i-1], false, i);
   }
 }
 
@@ -186,7 +186,7 @@ function addNewInputPair(inputPairs, title, isManual, index) {
   playersInput.name = 'players';
   playersInput.required = true;
   playersInput.style.width = '50px';
-  playersInput.value = '0'; // Default value set to 0
+  playersInput.placeholder = '0'; // Default value set to 0
   playersCell.appendChild(playersInput);
   newRow.appendChild(playersCell);
 
@@ -197,7 +197,7 @@ function addNewInputPair(inputPairs, title, isManual, index) {
   wpInput.name = 'WP';
   wpInput.required = true;
   wpInput.style.width = '50px';
-  wpInput.value = '0'; // Default value set to 0
+  wpInput.placeholder = '0'; // Default value set to 0
   wpCell.appendChild(wpInput);
   newRow.appendChild(wpCell);
 
@@ -314,47 +314,41 @@ function calculateTeamTotals() {
 
     // Get the player's value
     let playersInput = inputPair.querySelector('input[name="players"]');
-    console.log(playersInput.value);
-    
     let wpInput = inputPair.querySelector('input[name="WP"]')
-    console.log(wpInput.value);
     
     let playersValue = parseInt(playersInput.value) || 0;
     let wpValue = parseInt(wpInput.value) || 0;
 
-    let index = i; // replace with the actual index
+    let index = i; 
     let radioButtons = document.querySelectorAll(`input[name="team${index}"]`);
 
     let teamAInput = radioButtons[0];
     let teamBInput = radioButtons[1];
 
-    // Now you can use teamAInput and teamBInput
-    console.log(teamAInput.checked); // logs true if team A is selected, false otherwise
-    console.log(teamBInput.checked); // logs true if team B is selected, false otherwise
+    if (isNaN(playersValue)) {
+      playersValue = 0;
+    }
+    else{}
 
+    if (isNaN(wpValue)) {
+      wpValue = 0;
+    }
+    else{}
 
 
     // Check which radio button is selected and add the player's value to the corresponding team's total
-    
-    
-    //let teamAInput = inputPair.querySelector('input[name="teamA"]');
-    //let teamBInput = inputPair.querySelector('input[name="teamB"]');
+
     if (teamAInput.checked) {
       teamATotalPlayers += playersValue;
       teamATotalWP += wpValue;
-    } else if (teamBInput.checked) {
+    }
+    else if (teamBInput.checked) {
       teamBTotalPlayers += playersValue;
       teamBTotalWP += wpValue;
     }
 
     
   }
-
-  // Log the totals for testing
-  console.log('Team A total players:', teamATotalPlayers);
-  console.log('Team A total WP:', teamATotalWP);
-  console.log('Team B total players:', teamBTotalPlayers);
-  console.log('Team B total WP:', teamBTotalWP);
 
   
   // Update totals table with team totals
@@ -398,7 +392,7 @@ function calculateTeamTotals() {
         totalsTable.rows[3].cells[3].style.color = 'black';
     }
 
-}  //Placeholder
+}
 
 </script>
 
