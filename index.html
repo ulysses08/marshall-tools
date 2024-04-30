@@ -14,8 +14,20 @@
     padding-right: 10px; /* Adjust the value as needed */
   }
 
+  #location {
+    margin: auto;
+    width: 70%;
+    max-width: 140px;
+    font-size: 20px;
+  }
+
+  #inputPairs {
+    margin: auto;
+  }
+
   #totals {
     margin: auto;
+    text-align: center;
   }
 
   #teamTable {
@@ -35,13 +47,14 @@
 
 <form action="/submit" method="post">
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <label for="location">Location:</label>
+
     <select id="location" name="location">
-      <option value="">Select a location</option>
+      <option value="">Location</option>
       <!-- Options will be populated by JavaScript -->
     </select>
   </div>
-  <table id="inputPairs">
+  <table id="inputPairs" style="margin-top: 10px; display: none;">
+
     <!-- This table will be populated by JavaScript -->
   </table>
     
@@ -133,6 +146,8 @@ function addNewInputPairs(element) {
   if (element.value) {
     teamTable.style.display = 'table'; // Show the table when a location is selected
     totals.style.display = 'table'; // Show the table when a location is selected
+    inputPairs.style.display = 'table'; // Show the table when a location is selected
+
     let warbands = warbandsByLocation[element.value].concat(commonWarbands);
     for (let i = 0; i < warbands.length; i++) {
       // Add a row for each warband
@@ -144,6 +159,14 @@ function addNewInputPairs(element) {
     teamTable.style.display = 'none'; // Hide the table when no location is selected
     totals.style.display = 'none';
   }
+
+
+let titleRow = document.createElement('tr');
+titleRow.innerHTML = '<th>Title</th><th>Players</th><th>WP</th><th>Team</th>';
+inputPairs.appendChild(titleRow);
+
+
+
   let warbands = warbandsByLocation[element.value].concat(commonWarbands);
   for (let i = 0; i < warbands.length; i++) {
     addNewInputPair(inputPairs, warbands[i], false, i);
@@ -166,7 +189,7 @@ function addNewInputPair(inputPairs, title, isManual, index) {
   newRow.appendChild(titleCell);
 
   let playersCell = document.createElement('td');
-  playersCell.innerHTML = 'Players:';
+  //playersCell.innerHTML = 'Players:';
   let playersInput = document.createElement('input');
   playersInput.type = 'number';
   playersInput.name = 'number1';
@@ -177,7 +200,7 @@ function addNewInputPair(inputPairs, title, isManual, index) {
   newRow.appendChild(playersCell);
 
   let wpCell = document.createElement('td');
-  wpCell.innerHTML = 'WP:';
+  //wpCell.innerHTML = 'WP:';
   let wpInput = document.createElement('input');
   wpInput.type = 'number';
   wpInput.name = 'number2';
@@ -187,6 +210,47 @@ function addNewInputPair(inputPairs, title, isManual, index) {
   wpCell.appendChild(wpInput);
   newRow.appendChild(wpCell);
 
+  let teamCell = document.createElement('td');
+
+let teamADiv = document.createElement('div');
+teamADiv.style.display = 'block';
+let teamALabel = document.createElement('label');
+teamALabel.innerHTML = 'A:';
+let teamAInput = document.createElement('input');
+teamAInput.type = 'radio';
+teamAInput.name = 'team' + index;
+teamAInput.value = 'A';
+teamAInput.dataset.warband = title; // Add the warband name as a data attribute
+teamAInput.addEventListener('change', updateTeamTable); // Add an event listener
+teamADiv.appendChild(teamALabel);
+teamADiv.appendChild(teamAInput);
+teamCell.appendChild(teamADiv);
+
+let teamBDiv = document.createElement('div');
+teamBDiv.style.display = 'block';
+let teamBLabel = document.createElement('label');
+teamBLabel.innerHTML = 'B:';
+let teamBInput = document.createElement('input');
+teamBInput.type = 'radio';
+teamBInput.name = 'team' + index;
+teamBInput.value = 'B';
+teamBInput.dataset.warband = title; // Add the warband name as a data attribute
+teamBInput.addEventListener('change', updateTeamTable); // Add an event listener
+teamBDiv.appendChild(teamBLabel);
+teamBDiv.appendChild(teamBInput);
+teamCell.appendChild(teamBDiv);
+
+newRow.appendChild(teamCell);
+
+inputPairs.appendChild(newRow);
+
+playersInput.addEventListener('change', calculateTeamTotals);
+wpInput.addEventListener('change', calculateTeamTotals);
+teamAInput.addEventListener('change', calculateTeamTotals);
+teamBInput.addEventListener('change', calculateTeamTotals);
+
+
+  /*
   let teamCell = document.createElement('td');
   let teamALabel = document.createElement('label');
   teamALabel.innerHTML = 'A:';
@@ -218,6 +282,8 @@ function addNewInputPair(inputPairs, title, isManual, index) {
     wpInput.addEventListener('change', calculateTeamTotals);
     teamAInput.addEventListener('change', calculateTeamTotals);
     teamBInput.addEventListener('change', calculateTeamTotals);
+
+    */
 }
 
 function updateTeamTable(event) {
