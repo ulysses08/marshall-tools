@@ -102,6 +102,31 @@
 
 <script type="module">
 
+const mysql = require('mysql');
+
+// Create a connection to your MySQL database
+const connection = mysql.createConnection({
+  host: 'localhost', // replace with your host
+  user: 'your_username', // replace with your username
+  password: 'your_password', // replace with your password
+  database: 'your_database' // replace with your database name
+});
+
+connection.connect((err) => {
+  if (err) throw err;
+  console.log('Connected to the MySQL server.');
+});
+
+// Now you can use `connection` to query your database
+connection.query('SELECT * FROM your_table', (err, results, fields) => {
+  if (err) throw err;
+  console.log(results);
+});
+
+connection.end();
+
+
+
 
 import { warbandsByLocation } from './database.js';
 import { commonWarbands } from './database.js';
