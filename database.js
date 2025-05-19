@@ -7,8 +7,8 @@
 // Warbands
 export const warbandsByLocation = {
     "Ballarat": [
-    "Oboz Lys", "Boars", "Yldrai", "Middenheim", "Casteliers Guard", 
-    "Wardens"
+    "Oboz Lys", "Boars", "Ylvan Hadrai", "Middenheim", "Casteliers Guard", 
+    "Bleakwood Jaegers"
     ],
     "Geelong": ["Everfrost", "Legion", "Black Rose", "Dwarves"]
 };
